@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>마곡TF 사건관리</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <section id="authView" class="auth-shell">
+    <div class="auth-card">
+      <div class="brand-mark">MG</div>
+      <h1>마곡TF 사건관리</h1>
+      <p class="muted">승인된 사용자만 접속할 수 있습니다.</p>
+      <form id="authForm">
+        <label>이메일<input id="email" type="email" required autocomplete="email" /></label>
+        <label>비밀번호<input id="password" type="password" required minlength="6" autocomplete="current-password" /></label>
+        <button type="submit" class="primary">로그인</button>
+      </form>
+      <button id="signupBtn" class="secondary">최초 관리자 계정 만들기</button>
+      <p id="authMsg" class="message"></p>
+    </div>
+  </section>
+
+  <section id="mainView" class="hidden">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">MG TF</div>
+        <h1>마곡TF 사건관리</h1>
+      </div>
+      <div class="top-actions">
+        <span id="userEmail" class="muted"></span>
+        <button id="logoutBtn" class="secondary small">로그아웃</button>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="stats-grid">
+        <article class="stat"><span>전체 사건</span><strong id="statTotal">0</strong></article>
+        <article class="stat"><span>진행중</span><strong id="statActive">0</strong></article>
+        <article class="stat"><span>승인</span><strong id="statApproved">0</strong></article>
+        <article class="stat"><span>불승인</span><strong id="statDenied">0</strong></article>
+        <article class="stat"><span>수치미달</span><strong id="statShortfall">0</strong></article>
+        <article class="stat"><span>확대특진</span><strong id="statExpanded">0</strong></article>
+      </section>
+
+      <section class="panel">
+        <div class="toolbar">
+          <input id="searchInput" class="search" placeholder="이름, 지사, 담당자 검색" />
+          <select id="statusFilter">
+            <option value="">전체 상태</option>
+            <option>접수대기</option><option>접수완료</option><option>특진예정</option>
+            <option>특진중</option><option>승인</option><option>불승인</option><option>종결</option>
+          </select>
+          <label class="check"><input type="checkbox" id="shortfallFilter" /> 수치미달</label>
+          <label class="check"><input type="checkbox" id="expandedFilter" /> 확대특진</label>
+          <button id="newCaseBtn" class="primary">+ 사건 등록</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>이름</th><th>소개자</th><th>지사</th><th>공단담당자</th>
+                <th>접수일</th><th>통지일</th><th>진행상황</th><th>직종</th>
+              </tr>
+            </thead>
+            <tbody id="caseRows"></tbody>
+          </table>
+        </div>
+        <div id="emptyState" class="empty hidden">조건에 맞는 사건이 없습니다.</div>
+      </section>
+    </main>
+  </section>
+
+  <dialog id="caseDialog">
+    <form id="caseForm" method="dialog" class="dialog-card">
+      <div class="dialog-head">
+        <div><div class="eyebrow">CASE</div><h2 id="dialogTitle">사건 등록</h2></div>
+        <button type="button" id="closeDialog" class="icon-btn">×</button>
+      </div>
+      <input type="hidden" id="caseId" />
+      <div class="form-grid">
+        <label>이름<input id="fName" required /></label>
+        <label>소개자<input id="fIntroducer" /></label>
+        <label>지사<input id="fBranch" /></label>
+        <label>공단 담당자<input id="fAgencyContact" /></label>
+        <label>접수일<input id="fFiledAt" type="date" /></label>
+        <label>통지일<input id="fNoticeAt" type="date" /></label>
+        <label>진행상황
+          <select id="fStatus">
+            <option>접수대기</option><option>접수완료</option><option>특진예정</option>
+            <option>특진중</option><option>승인</option><option>불승인</option><option>종결</option>
+          </select>
+        </label>
+        <label>직종<input id="fOccupation" /></label>
+        <label class="full">승불자료<input id="fApprovalMaterial" /></label>
+        <label class="full">비고<textarea id="fNotes" rows="4"></textarea></label>
+      </div>
+      <div class="flag-row">
+        <label class="check"><input id="fMagog" type="checkbox" /> 마곡TF</label>
+        <label class="check"><input id="fCapital" type="checkbox" /> 수도권역</label>
+        <label class="check"><input id="fLawfirm" type="checkbox" /> 법프공</label>
+        <label class="check"><input id="fShortfall" type="checkbox" /> 수치미달</label>
+        <label class="check"><input id="fExpanded" type="checkbox" /> 확대특진</label>
+      </div>
+      <fieldset>
+        <legend>특진 정보</legend>
+        <div class="form-grid">
+          <label>초진병원<input id="fInitialHospital" /></label>
+          <label>초진수치<input id="fInitialValue" /></label>
+          <label>특진병원<input id="fSpecialHospital" /></label>
+          <label>특진수치<input id="fSpecialValue" /></label>
+          <label>특진예정일<input id="fScheduledAt" type="date" /></label>
+          <label class="full">특진 비고<textarea id="fExamNotes" rows="3"></textarea></label>
+        </div>
+      </fieldset>
+      <div class="dialog-actions">
+        <button type="button" id="deleteCaseBtn" class="danger hidden">삭제</button>
+        <span class="spacer"></span>
+        <button type="button" id="cancelBtn" class="secondary">취소</button>
+        <button type="submit" class="primary">저장</button>
+      </div>
+      <p id="formMsg" class="message"></p>
+    </form>
+  </dialog>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
