@@ -79,16 +79,16 @@ async function loadCases() {
 function render() {
   const q = $('searchInput').value.trim().toLowerCase()
   const status = $('statusFilter').value
-  const onlyShortfall = $('shortfallFilter').checked
-  const onlyExpanded = $('expandedFilter').checked
+  const category = $('categoryFilter').value
+
+  syncStatusOptions()
 
   const filtered = allCases.filter(c => {
     const hay = [c.name, c.introducer, c.branch, c.agency_contact, c.occupation, c.notes]
       .filter(Boolean).join(' ').toLowerCase()
     return (!q || hay.includes(q))
       && (!status || c.status === status)
-      && (!onlyShortfall || c.numeric_shortfall)
-      && (!onlyExpanded || c.expanded_exam)
+      && matchesCategory(c, category)
   })
 
   $('caseRows').innerHTML = filtered.map(c => `
@@ -99,23 +99,25 @@ function render() {
       <td>${esc(c.agency_contact)}</td>
       <td>${fmt(c.filed_at)}</td>
       <td>${fmt(c.notice_at)}</td>
+      <td>${categoryBadges(c)}</td>
       <td><span class="status-pill">${esc(c.status)}</span></td>
       <td>${esc(c.occupation)}</td>
     </tr>`).join('')
 
   $('emptyState').classList.toggle('hidden', filtered.length > 0)
   $('statTotal').textContent = allCases.length
-  $('statActive').textContent = allCases.filter(c => ['접수대기','접수완료','특진예정','특진중'].includes(c.status)).length
-  $('statApproved').textContent = allCases.filter(c => String(c.status).startsWith('승인')).length
-  $('statDenied').textContent = allCases.filter(c => String(c.status).startsWith('불승인')).length
-  $('statShortfall').textContent = allCases.filter(c => c.numeric_shortfall).length
-  $('statExpanded').textContent = allCases.filter(c => c.expanded_exam).length
+  $('statApproved').textContent = allCases.filter(c => matchesCategory(c, 'approved')).length
+  $('statDeniedGeneral').textContent = allCases.filter(c => matchesCategory(c, 'denied_general')).length
+  $('statShortfallDenied').textContent = allCases.filter(c => matchesCategory(c, 'shortfall_denied')).length
+  $('statShortfallReturned').textContent = allCases.filter(c => matchesCategory(c, 'shortfall_returned')).length
+  $('statExpanded').textContent = allCases.filter(c => matchesCategory(c, 'expanded')).length
+  $('statActive').textContent = allCases.filter(c => matchesCategory(c, 'active')).length
 
   document.querySelectorAll('#caseRows tr')
     .forEach(tr => tr.addEventListener('click', () => openCase(tr.dataset.id)))
 }
 
-['searchInput','statusFilter','shortfallFilter','expandedFilter'].forEach(id => {
+['searchInput','statusFilter','categoryFilter'].forEach(id => {
   $(id).addEventListener(id === 'searchInput' ? 'input' : 'change', render)
 })
 
@@ -226,6 +228,49 @@ $('deleteCaseBtn').addEventListener('click', async () => {
     await loadCases()
   }
 })
+
+function isActiveCase(c) {
+  const s = String(c.status || '')
+  return ['접수대기','접수완료','특진예정','특진중','특진완료'].includes(s)
+    || s.includes('(진행)')
+}
+
+function matchesCategory(c, category) {
+  if (!category) return true
+  const s = String(c.status || '')
+  if (category === 'approved') return s.startsWith('승인')
+  if (category === 'denied_general') return !c.numeric_shortfall && s.startsWith('불승인')
+  if (category === 'shortfall_denied') return !!c.numeric_shortfall && s.startsWith('불승인')
+  if (category === 'shortfall_returned') return !!c.numeric_shortfall && s.startsWith('반려')
+  if (category === 'expanded') return !!c.expanded_exam
+  if (category === 'active') return isActiveCase(c)
+  return true
+}
+
+function categoryBadges(c) {
+  const badges = []
+  const s = String(c.status || '')
+  if (s.startsWith('승인')) badges.push('승인')
+  if (!c.numeric_shortfall && s.startsWith('불승인')) badges.push('일반 불승인')
+  if (c.numeric_shortfall && s.startsWith('불승인')) badges.push('수치미달·불승인')
+  if (c.numeric_shortfall && s.startsWith('반려')) badges.push('수치미달·반려')
+  if (c.expanded_exam) badges.push('확대특진')
+  if (!badges.length && isActiveCase(c)) badges.push('진행중')
+  return badges.map(x => '<span class="category-pill">' + esc(x) + '</span>').join(' ')
+}
+
+function syncStatusOptions() {
+  const select = $('statusFilter')
+  const current = select.value
+  const statuses = [...new Set(allCases.map(c => c.status).filter(Boolean))]
+    .sort((a,b) => String(a).localeCompare(String(b), 'ko'))
+  const signature = statuses.join('|')
+  if (select.dataset.signature === signature) return
+  select.dataset.signature = signature
+  select.innerHTML = '<option value="">전체 진행상황</option>' +
+    statuses.map(s => '<option value="' + esc(s) + '">' + esc(s) + '</option>').join('')
+  if (statuses.includes(current)) select.value = current
+}
 
 function val(id) {
   const v = $(id).value.trim()
