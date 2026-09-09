@@ -47,7 +47,7 @@
 
       <section class="panel">
         <div class="toolbar">
-          <input id="searchInput" class="search" placeholder="이름, 지사, 담당자 검색" />
+          <input id="searchInput" class="search" placeholder="이름, 지역본부, 담당자 검색" />
           <select id="categoryFilter">
             <option value="">전체 구분</option>
             <option value="approved">승인</option>
@@ -65,7 +65,7 @@
           <table>
             <thead>
               <tr>
-                <th>이름</th><th>소개자</th><th>지사</th><th>공단담당자</th>
+                <th>이름</th><th>소개자</th><th>지역본부</th><th>공단담당자</th>
                 <th>접수일</th><th>통지일</th><th>구분</th><th>진행상황</th><th>직종</th>
               </tr>
             </thead>
@@ -87,7 +87,18 @@
       <div class="form-grid">
         <label>이름<input id="fName" required /></label>
         <label>소개자<input id="fIntroducer" /></label>
-        <label>지사<input id="fBranch" /></label>
+        <label>지역본부
+          <select id="fBranch">
+            <option value="">선택 안 함</option>
+            <option>서울지역본부</option>
+            <option>경인지역본부</option>
+            <option>강원지역본부</option>
+            <option>대전지역본부</option>
+            <option>대구지역본부</option>
+            <option>부산지역본부</option>
+            <option>광주지역본부</option>
+          </select>
+        </label>
         <label>공단 담당자<input id="fAgencyContact" /></label>
         <label>접수일<input id="fFiledAt" type="date" /></label>
         <label>통지일<input id="fNoticeAt" type="date" /></label>
