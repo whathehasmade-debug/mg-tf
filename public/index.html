@@ -48,15 +48,21 @@
       <section class="panel">
         <div class="toolbar">
           <input id="searchInput" class="search" placeholder="이름, 지역본부, 담당자 검색" />
-          <select id="categoryFilter">
-            <option value="">전체 구분</option>
-            <option value="approved">승인</option>
-            <option value="denied_general">일반 불승인</option>
-            <option value="shortfall_denied">수치미달 · 불승인</option>
-            <option value="shortfall_returned">수치미달 · 반려</option>
-            <option value="expanded">확대특진</option>
-            <option value="active">진행중</option>
-          </select>
+          <details id="categoryMulti" class="multi-filter">
+            <summary id="categorySummary">전체 구분</summary>
+            <div class="multi-filter-menu">
+              <div class="multi-filter-head">
+                <strong>구분 선택</strong>
+                <button type="button" id="clearCategoryFilter" class="text-btn">전체 보기</button>
+              </div>
+              <label><input type="checkbox" class="category-check" value="approved" /> 승인</label>
+              <label><input type="checkbox" class="category-check" value="denied_general" /> 일반 불승인</label>
+              <label><input type="checkbox" class="category-check" value="shortfall_denied" /> 수치미달 · 불승인</label>
+              <label><input type="checkbox" class="category-check" value="shortfall_returned" /> 수치미달 · 반려</label>
+              <label><input type="checkbox" class="category-check" value="expanded" /> 확대특진</label>
+              <label><input type="checkbox" class="category-check" value="active" /> 진행중</label>
+            </div>
+          </details>
           <select id="statusFilter"><option value="">전체 진행상황</option></select>
           <button id="newCaseBtn" class="primary">+ 사건 등록</button>
         </div>
