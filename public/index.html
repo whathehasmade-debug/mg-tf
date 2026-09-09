@@ -63,7 +63,16 @@
               <label><input type="checkbox" class="category-check" value="active" /> 진행중</label>
             </div>
           </details>
-          <select id="statusFilter"><option value="">전체 진행상황</option></select>
+          <details id="statusMulti" class="multi-filter">
+            <summary id="statusSummary">전체 진행상황</summary>
+            <div class="multi-filter-menu">
+              <div class="multi-filter-head">
+                <strong>진행상황 선택</strong>
+                <button type="button" id="clearStatusFilter" class="text-btn">전체 보기</button>
+              </div>
+              <div id="statusOptionsBox"></div>
+            </div>
+          </details>
           <button id="newCaseBtn" class="primary">+ 사건 등록</button>
         </div>
 
