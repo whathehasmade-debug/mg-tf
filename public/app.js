@@ -169,7 +169,7 @@ $('caseForm').addEventListener('submit', async (ev) => {
     name: $('fName').value.trim(),
     introducer: val('fIntroducer'),
     branch: val('fBranch'),
-    agency_contact: val('fAgencyContact'),
+    agency_contact: cleanAgencyContact(val('fAgencyContact')),
     filed_at: val('fFiledAt'),
     notice_at: val('fNoticeAt'),
     status: $('fStatus').value,
@@ -270,6 +270,15 @@ function syncStatusOptions() {
   select.innerHTML = '<option value="">전체 진행상황</option>' +
     statuses.map(s => '<option value="' + esc(s) + '">' + esc(s) + '</option>').join('')
   if (statuses.includes(current)) select.value = current
+}
+
+function cleanAgencyContact(v) {
+  if (!v) return null
+  const cleaned = String(v)
+    .replace(/\s*\/.*$/, '')
+    .replace(/\s*0505-[0-9-]+/g, '')
+    .trim()
+  return cleaned || null
 }
 
 function val(id) {
