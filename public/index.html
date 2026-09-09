@@ -37,23 +37,27 @@
     <main class="page">
       <section class="stats-grid">
         <article class="stat"><span>전체 사건</span><strong id="statTotal">0</strong></article>
-        <article class="stat"><span>진행중</span><strong id="statActive">0</strong></article>
         <article class="stat"><span>승인</span><strong id="statApproved">0</strong></article>
-        <article class="stat"><span>불승인</span><strong id="statDenied">0</strong></article>
-        <article class="stat"><span>수치미달</span><strong id="statShortfall">0</strong></article>
+        <article class="stat"><span>일반 불승인</span><strong id="statDeniedGeneral">0</strong></article>
+        <article class="stat"><span>수치미달 · 불승인</span><strong id="statShortfallDenied">0</strong></article>
+        <article class="stat"><span>수치미달 · 반려</span><strong id="statShortfallReturned">0</strong></article>
         <article class="stat"><span>확대특진</span><strong id="statExpanded">0</strong></article>
+        <article class="stat"><span>진행중</span><strong id="statActive">0</strong></article>
       </section>
 
       <section class="panel">
         <div class="toolbar">
           <input id="searchInput" class="search" placeholder="이름, 지사, 담당자 검색" />
-          <select id="statusFilter">
-            <option value="">전체 상태</option>
-            <option>접수대기</option><option>접수완료</option><option>특진예정</option>
-            <option>특진중</option><option>승인</option><option>불승인</option><option>종결</option>
+          <select id="categoryFilter">
+            <option value="">전체 구분</option>
+            <option value="approved">승인</option>
+            <option value="denied_general">일반 불승인</option>
+            <option value="shortfall_denied">수치미달 · 불승인</option>
+            <option value="shortfall_returned">수치미달 · 반려</option>
+            <option value="expanded">확대특진</option>
+            <option value="active">진행중</option>
           </select>
-          <label class="check"><input type="checkbox" id="shortfallFilter" /> 수치미달</label>
-          <label class="check"><input type="checkbox" id="expandedFilter" /> 확대특진</label>
+          <select id="statusFilter"><option value="">전체 진행상황</option></select>
           <button id="newCaseBtn" class="primary">+ 사건 등록</button>
         </div>
 
@@ -62,7 +66,7 @@
             <thead>
               <tr>
                 <th>이름</th><th>소개자</th><th>지사</th><th>공단담당자</th>
-                <th>접수일</th><th>통지일</th><th>진행상황</th><th>직종</th>
+                <th>접수일</th><th>통지일</th><th>구분</th><th>진행상황</th><th>직종</th>
               </tr>
             </thead>
             <tbody id="caseRows"></tbody>
@@ -88,10 +92,15 @@
         <label>접수일<input id="fFiledAt" type="date" /></label>
         <label>통지일<input id="fNoticeAt" type="date" /></label>
         <label>진행상황
-          <select id="fStatus">
-            <option>접수대기</option><option>접수완료</option><option>특진예정</option>
-            <option>특진중</option><option>승인</option><option>불승인</option><option>종결</option>
-          </select>
+          <input id="fStatus" list="statusOptions" placeholder="예: 승인(결), 불승인(진행), 반려(수치미달)" />
+          <datalist id="statusOptions">
+            <option value="접수대기"></option><option value="접수완료"></option>
+            <option value="특진예정"></option><option value="특진중"></option><option value="특진완료"></option>
+            <option value="승인"></option><option value="승인(결)"></option><option value="승인(진행)"></option>
+            <option value="불승인"></option><option value="불승인(결)"></option><option value="불승인(진행)"></option>
+            <option value="불승인(수치미달)"></option><option value="반려(수치미달)"></option>
+            <option value="종결"></option>
+          </datalist>
         </label>
         <label>직종<input id="fOccupation" /></label>
         <label class="full">승불자료<input id="fApprovalMaterial" /></label>
