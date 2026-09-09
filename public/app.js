@@ -80,7 +80,7 @@ async function loadCases() {
 
 function render() {
   const q = $('searchInput').value.trim().toLowerCase()
-  const status = $('statusFilter').value
+  const selectedStatuses = getSelectedStatuses()
   const selectedCategories = getSelectedCategories()
 
   syncStatusOptions()
@@ -89,7 +89,7 @@ function render() {
     const hay = [c.name, c.introducer, c.branch, c.agency_contact, c.occupation, c.notes]
       .filter(Boolean).join(' ').toLowerCase()
     return (!q || hay.includes(q))
-      && (!status || c.status === status)
+      && (!selectedStatuses.length || selectedStatuses.includes(c.status))
       && (!selectedCategories.length || selectedCategories.some(category => matchesCategory(c, category)))
   })
 
@@ -125,9 +125,7 @@ function render() {
     .forEach(tr => tr.addEventListener('click', () => openCase(tr.dataset.id)))
 }
 
-['searchInput','statusFilter'].forEach(id => {
-  $(id).addEventListener(id === 'searchInput' ? 'input' : 'change', render)
-})
+$('searchInput').addEventListener('input', render)
 
 document.querySelectorAll('.category-check').forEach(input => {
   input.addEventListener('change', () => {
@@ -139,6 +137,12 @@ document.querySelectorAll('.category-check').forEach(input => {
 $('clearCategoryFilter').addEventListener('click', () => {
   document.querySelectorAll('.category-check').forEach(input => { input.checked = false })
   updateCategorySummary()
+  render()
+})
+
+$('clearStatusFilter').addEventListener('click', () => {
+  document.querySelectorAll('.status-check').forEach(input => { input.checked = false })
+  updateStatusSummary()
   render()
 })
 
@@ -263,6 +267,22 @@ $('deleteCaseBtn').addEventListener('click', async () => {
   }
 })
 
+function getSelectedStatuses() {
+  return [...document.querySelectorAll('.status-check:checked')].map(input => input.value)
+}
+
+function updateStatusSummary() {
+  const selected = getSelectedStatuses()
+  const summary = $('statusSummary')
+  if (!selected.length) {
+    summary.textContent = '전체 진행상황'
+    return
+  }
+  summary.textContent = selected.length === 1
+    ? selected[0]
+    : selected.length + '개 진행상황 선택'
+}
+
 function getSelectedCategories() {
   return [...document.querySelectorAll('.category-check:checked')].map(input => input.value)
 }
@@ -318,16 +338,32 @@ function categoryBadges(c) {
 }
 
 function syncStatusOptions() {
-  const select = $('statusFilter')
-  const current = select.value
+  const box = $('statusOptionsBox')
+  const current = new Set(getSelectedStatuses())
   const statuses = [...new Set(allCases.map(c => c.status).filter(Boolean))]
     .sort((a,b) => String(a).localeCompare(String(b), 'ko'))
+
   const signature = statuses.join('|')
-  if (select.dataset.signature === signature) return
-  select.dataset.signature = signature
-  select.innerHTML = '<option value="">전체 진행상황</option>' +
-    statuses.map(s => '<option value="' + esc(s) + '">' + esc(s) + '</option>').join('')
-  if (statuses.includes(current)) select.value = current
+  if (box.dataset.signature === signature) {
+    updateStatusSummary()
+    return
+  }
+
+  box.dataset.signature = signature
+  box.innerHTML = statuses.map(status => {
+    const checked = current.has(status) ? ' checked' : ''
+    return '<label><input type="checkbox" class="status-check" value="' +
+      esc(status) + '"' + checked + ' /> ' + esc(status) + '</label>'
+  }).join('')
+
+  document.querySelectorAll('.status-check').forEach(input => {
+    input.addEventListener('change', () => {
+      updateStatusSummary()
+      render()
+    })
+  })
+
+  updateStatusSummary()
 }
 
 function compareDateField(a, b, field, direction) {
