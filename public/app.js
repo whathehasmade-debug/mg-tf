@@ -276,9 +276,9 @@ function updateCategorySummary() {
   }
   const labels = {
     approved: '승인',
-    denied_general: '일반 불승인',
-    shortfall_denied: '수치미달 · 불승인',
-    shortfall_returned: '수치미달 · 반려',
+    denied_general: '불승인',
+    shortfall_denied: '수치미달(불승인)',
+    shortfall_returned: '수치미달(반려)',
     expanded: '확대특진',
     active: '진행중'
   }
@@ -309,9 +309,9 @@ function categoryBadges(c) {
   const badges = []
   const s = String(c.status || '')
   if (s.startsWith('승인')) badges.push('승인')
-  if (!c.numeric_shortfall && s.startsWith('불승인')) badges.push('일반 불승인')
-  if (c.numeric_shortfall && s.startsWith('불승인')) badges.push('수치미달·불승인')
-  if (c.numeric_shortfall && s.startsWith('반려')) badges.push('수치미달·반려')
+  if (!c.numeric_shortfall && s.startsWith('불승인')) badges.push('불승인')
+  if (c.numeric_shortfall && s.startsWith('불승인')) badges.push('수치미달(불승인)')
+  if (c.numeric_shortfall && s.startsWith('반려')) badges.push('수치미달(반려)')
   if (c.expanded_exam) badges.push('확대특진')
   if (!badges.length && isActiveCase(c)) badges.push('진행중')
   return badges.map(x => '<span class="category-pill">' + esc(x) + '</span>').join(' ')
