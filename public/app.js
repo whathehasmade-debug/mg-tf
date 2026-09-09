@@ -6,6 +6,8 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
 
 const $ = id => document.getElementById(id)
 let allCases = []
+let sortField = null
+let sortDirection = 'desc'
 const authView = $('authView')
 const mainView = $('mainView')
 const caseDialog = $('caseDialog')
@@ -83,13 +85,19 @@ function render() {
 
   syncStatusOptions()
 
-  const filtered = allCases.filter(c => {
+  let filtered = allCases.filter(c => {
     const hay = [c.name, c.introducer, c.branch, c.agency_contact, c.occupation, c.notes]
       .filter(Boolean).join(' ').toLowerCase()
     return (!q || hay.includes(q))
       && (!status || c.status === status)
       && matchesCategory(c, category)
   })
+
+  if (sortField) {
+    filtered = [...filtered].sort((a, b) => compareDateField(a, b, sortField, sortDirection))
+  }
+
+  updateSortIcons()
 
   $('caseRows').innerHTML = filtered.map(c => `
     <tr data-id="${c.id}">
@@ -119,6 +127,19 @@ function render() {
 
 ['searchInput','statusFilter','categoryFilter'].forEach(id => {
   $(id).addEventListener(id === 'searchInput' ? 'input' : 'change', render)
+})
+
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const field = btn.dataset.sort
+    if (sortField === field) {
+      sortDirection = sortDirection === 'asc' ? 'desc' : 'asc'
+    } else {
+      sortField = field
+      sortDirection = 'desc'
+    }
+    render()
+  })
 })
 
 $('newCaseBtn').addEventListener('click', () => openCase())
@@ -270,6 +291,25 @@ function syncStatusOptions() {
   select.innerHTML = '<option value="">전체 진행상황</option>' +
     statuses.map(s => '<option value="' + esc(s) + '">' + esc(s) + '</option>').join('')
   if (statuses.includes(current)) select.value = current
+}
+
+function compareDateField(a, b, field, direction) {
+  const av = a[field]
+  const bv = b[field]
+
+  if (!av && !bv) return 0
+  if (!av) return 1
+  if (!bv) return -1
+
+  const cmp = String(av).localeCompare(String(bv))
+  return direction === 'asc' ? cmp : -cmp
+}
+
+function updateSortIcons() {
+  const filed = $('sortFiledIcon')
+  const notice = $('sortNoticeIcon')
+  if (filed) filed.textContent = sortField === 'filed_at' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕'
+  if (notice) notice.textContent = sortField === 'notice_at' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕'
 }
 
 function cleanAgencyContact(v) {
