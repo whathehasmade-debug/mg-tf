@@ -81,7 +81,7 @@ async function loadCases() {
 function render() {
   const q = $('searchInput').value.trim().toLowerCase()
   const status = $('statusFilter').value
-  const category = $('categoryFilter').value
+  const selectedCategories = getSelectedCategories()
 
   syncStatusOptions()
 
@@ -90,7 +90,7 @@ function render() {
       .filter(Boolean).join(' ').toLowerCase()
     return (!q || hay.includes(q))
       && (!status || c.status === status)
-      && matchesCategory(c, category)
+      && (!selectedCategories.length || selectedCategories.some(category => matchesCategory(c, category)))
   })
 
   if (sortField) {
@@ -125,8 +125,21 @@ function render() {
     .forEach(tr => tr.addEventListener('click', () => openCase(tr.dataset.id)))
 }
 
-['searchInput','statusFilter','categoryFilter'].forEach(id => {
+['searchInput','statusFilter'].forEach(id => {
   $(id).addEventListener(id === 'searchInput' ? 'input' : 'change', render)
+})
+
+document.querySelectorAll('.category-check').forEach(input => {
+  input.addEventListener('change', () => {
+    updateCategorySummary()
+    render()
+  })
+})
+
+$('clearCategoryFilter').addEventListener('click', () => {
+  document.querySelectorAll('.category-check').forEach(input => { input.checked = false })
+  updateCategorySummary()
+  render()
 })
 
 document.querySelectorAll('.sort-btn').forEach(btn => {
@@ -249,6 +262,30 @@ $('deleteCaseBtn').addEventListener('click', async () => {
     await loadCases()
   }
 })
+
+function getSelectedCategories() {
+  return [...document.querySelectorAll('.category-check:checked')].map(input => input.value)
+}
+
+function updateCategorySummary() {
+  const selected = getSelectedCategories()
+  const summary = $('categorySummary')
+  if (!selected.length) {
+    summary.textContent = '전체 구분'
+    return
+  }
+  const labels = {
+    approved: '승인',
+    denied_general: '일반 불승인',
+    shortfall_denied: '수치미달 · 불승인',
+    shortfall_returned: '수치미달 · 반려',
+    expanded: '확대특진',
+    active: '진행중'
+  }
+  summary.textContent = selected.length === 1
+    ? labels[selected[0]]
+    : selected.length + '개 구분 선택'
+}
 
 function isActiveCase(c) {
   const s = String(c.status || '')
