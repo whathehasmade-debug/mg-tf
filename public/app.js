@@ -213,9 +213,11 @@ $('caseForm').addEventListener('submit', async (ev) => {
   $('formMsg').textContent = '저장 중...'
   const id = $('caseId').value
   const existingCase = id ? allCases.find(x => x.id === id) : null
-  const tagMagog = $('fMagog').checked
-  const tagCapital = $('fCapital').checked
-  const tagLawfirm = $('fLawfirm').checked
+  const statusValue = $('fStatus').value
+  const isShortfallOutcome = ['불승인(수치미달)', '반려(수치미달)'].includes(statusValue)
+  const tagMagog = true
+  const tagCapital = !isShortfallOutcome
+  const tagLawfirm = !isShortfallOutcome
 
   const payload = {
     name: $('fName').value.trim(),
@@ -224,14 +226,14 @@ $('caseForm').addEventListener('submit', async (ev) => {
     agency_contact: cleanAgencyContact(val('fAgencyContact')),
     filed_at: val('fFiledAt'),
     notice_at: val('fNoticeAt'),
-    status: $('fStatus').value,
+    status: statusValue,
     occupation: val('fOccupation'),
     approval_material: val('fApprovalMaterial'),
     notes: val('fNotes'),
     tag_magog: tagMagog,
     tag_capital: tagCapital,
     tag_lawfirm: tagLawfirm,
-    reported_magog: tagMagog ? !!existingCase?.reported_magog : false,
+    reported_magog: !!existingCase?.reported_magog,
     reported_capital: tagCapital ? !!existingCase?.reported_capital : false,
     reported_lawfirm: tagLawfirm ? !!existingCase?.reported_lawfirm : false,
     numeric_shortfall: $('fShortfall').checked,
@@ -307,7 +309,8 @@ async function updateReportStatus(input) {
 
 function reportStatusControls(c) {
   const items = [reportOption(c, 'reported_magog', '마곡TF')]
-  if (String(c.status || '') !== '반려(수치미달)') {
+  const s = String(c.status || '')
+  if (!['반려(수치미달)', '불승인(수치미달)'].includes(s)) {
     items.push(reportOption(c, 'reported_capital', '수도권역'))
     items.push(reportOption(c, 'reported_lawfirm', '법프공'))
   }
@@ -349,8 +352,8 @@ function updateCategorySummary() {
   const labels = {
     approved: '승인',
     denied_general: '불승인',
-    shortfall_denied: '수치미달(불승인)',
-    shortfall_returned: '수치미달(반려)',
+    shortfall_denied: '불승인(수치미달)',
+    shortfall_returned: '반려(수치미달)',
     expanded: '확대특진',
     active: '진행중'
   }
@@ -382,8 +385,8 @@ function categoryBadges(c) {
   const s = String(c.status || '')
   if (s.startsWith('승인')) badges.push('승인')
   if (!c.numeric_shortfall && s.startsWith('불승인')) badges.push('불승인')
-  if (c.numeric_shortfall && s.startsWith('불승인')) badges.push('수치미달(불승인)')
-  if (c.numeric_shortfall && s.startsWith('반려')) badges.push('수치미달(반려)')
+  if (c.numeric_shortfall && s.startsWith('불승인')) badges.push('불승인(수치미달)')
+  if (c.numeric_shortfall && s.startsWith('반려')) badges.push('반려(수치미달)')
   if (c.expanded_exam) badges.push('확대특진')
   if (!badges.length && isActiveCase(c)) badges.push('진행중')
   return badges.map(x => '<span class="category-pill">' + esc(x) + '</span>').join(' ')
