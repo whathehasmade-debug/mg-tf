@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>마곡TF 사건관리</title>
   <link rel="stylesheet" href="./styles.css" />
+  <style>#caseRows td:nth-child(9){display:none}.flag-row .check:nth-child(-n+3){display:none}</style>
 </head>
 <body>
   <section id="authView" class="auth-shell">
@@ -135,9 +136,9 @@
         <label class="full">비고<textarea id="fNotes" rows="4"></textarea></label>
       </div>
       <div class="flag-row">
-        <label class="check"><input id="fMagog" type="checkbox" /> 마곡TF</label>
-        <label class="check"><input id="fCapital" type="checkbox" /> 수도권역</label>
-        <label class="check"><input id="fLawfirm" type="checkbox" /> 법프공</label>
+        <label class="check"><input id="fMagog" type="checkbox" checked /> 마곡TF</label>
+        <label class="check"><input id="fCapital" type="checkbox" checked /> 수도권역</label>
+        <label class="check"><input id="fLawfirm" type="checkbox" checked /> 법프공</label>
         <label class="check"><input id="fShortfall" type="checkbox" /> 수치미달</label>
         <label class="check"><input id="fExpanded" type="checkbox" /> 확대특진</label>
       </div>
