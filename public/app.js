@@ -109,7 +109,6 @@ function render() {
       <td>${categoryBadges(c)}</td>
       <td><span class="status-pill">${esc(c.status)}</span></td>
       <td>${reportStatusControls(c)}</td>
-      <td>${esc(c.occupation)}</td>
     </tr>`).join('')
 
   $('emptyState').classList.toggle('hidden', filtered.length > 0)
@@ -307,13 +306,12 @@ async function updateReportStatus(input) {
 }
 
 function reportStatusControls(c) {
-  const items = []
-  if (c.tag_magog) items.push(reportOption(c, 'reported_magog', '마곡TF'))
-  if (c.tag_capital) items.push(reportOption(c, 'reported_capital', '수도권역'))
-  if (c.tag_lawfirm) items.push(reportOption(c, 'reported_lawfirm', '법프공'))
-  return items.length
-    ? '<div class="report-checks">' + items.join('') + '</div>'
-    : '<span class="muted">-</span>'
+  const items = [reportOption(c, 'reported_magog', '마곡TF')]
+  if (String(c.status || '') !== '반려(수치미달)') {
+    items.push(reportOption(c, 'reported_capital', '수도권역'))
+    items.push(reportOption(c, 'reported_lawfirm', '법프공'))
+  }
+  return '<div class="report-checks">' + items.join('') + '</div>'
 }
 
 function reportOption(c, field, label) {
