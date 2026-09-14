@@ -104,11 +104,11 @@ function render() {
       <td><strong>${esc(c.name)}</strong></td>
       <td>${esc(c.introducer)}</td>
       <td>${esc(c.branch)}</td>
-      <td>${esc(c.agency_contact)}</td>
       <td>${fmt(c.filed_at)}</td>
       <td>${fmt(c.notice_at)}</td>
       <td>${categoryBadges(c)}</td>
       <td><span class="status-pill">${esc(c.status)}</span></td>
+      <td>${reportStatusControls(c)}</td>
       <td>${esc(c.occupation)}</td>
     </tr>`).join('')
 
@@ -123,6 +123,16 @@ function render() {
 
   document.querySelectorAll('#caseRows tr')
     .forEach(tr => tr.addEventListener('click', () => openCase(tr.dataset.id)))
+
+  document.querySelectorAll('.report-option')
+    .forEach(label => label.addEventListener('click', e => e.stopPropagation()))
+
+  document.querySelectorAll('.report-check').forEach(input => {
+    input.addEventListener('change', async e => {
+      e.stopPropagation()
+      await updateReportStatus(input)
+    })
+  })
 }
 
 $('searchInput').addEventListener('input', render)
@@ -203,6 +213,11 @@ $('caseForm').addEventListener('submit', async (ev) => {
   ev.preventDefault()
   $('formMsg').textContent = '저장 중...'
   const id = $('caseId').value
+  const existingCase = id ? allCases.find(x => x.id === id) : null
+  const tagMagog = $('fMagog').checked
+  const tagCapital = $('fCapital').checked
+  const tagLawfirm = $('fLawfirm').checked
+
   const payload = {
     name: $('fName').value.trim(),
     introducer: val('fIntroducer'),
@@ -214,9 +229,12 @@ $('caseForm').addEventListener('submit', async (ev) => {
     occupation: val('fOccupation'),
     approval_material: val('fApprovalMaterial'),
     notes: val('fNotes'),
-    tag_magog: $('fMagog').checked,
-    tag_capital: $('fCapital').checked,
-    tag_lawfirm: $('fLawfirm').checked,
+    tag_magog: tagMagog,
+    tag_capital: tagCapital,
+    tag_lawfirm: tagLawfirm,
+    reported_magog: tagMagog ? !!existingCase?.reported_magog : false,
+    reported_capital: tagCapital ? !!existingCase?.reported_capital : false,
+    reported_lawfirm: tagLawfirm ? !!existingCase?.reported_lawfirm : false,
     numeric_shortfall: $('fShortfall').checked,
     expanded_exam: $('fExpanded').checked
   }
@@ -266,6 +284,42 @@ $('deleteCaseBtn').addEventListener('click', async () => {
     await loadCases()
   }
 })
+
+async function updateReportStatus(input) {
+  const id = input.dataset.id
+  const field = input.dataset.field
+  const checked = input.checked
+  input.disabled = true
+
+  const { error } = await supabase
+    .from('cases')
+    .update({ [field]: checked })
+    .eq('id', id)
+
+  if (error) {
+    input.checked = !checked
+    alert('보고현황 저장에 실패했습니다: ' + error.message)
+  } else {
+    const c = allCases.find(x => x.id === id)
+    if (c) c[field] = checked
+  }
+  input.disabled = false
+}
+
+function reportStatusControls(c) {
+  const items = []
+  if (c.tag_magog) items.push(reportOption(c, 'reported_magog', '마곡TF'))
+  if (c.tag_capital) items.push(reportOption(c, 'reported_capital', '수도권역'))
+  if (c.tag_lawfirm) items.push(reportOption(c, 'reported_lawfirm', '법프공'))
+  return items.length
+    ? '<div class="report-checks">' + items.join('') + '</div>'
+    : '<span class="muted">-</span>'
+}
+
+function reportOption(c, field, label) {
+  return '<label class="report-option"><input type="checkbox" class="report-check" data-id="' +
+    esc(c.id) + '" data-field="' + field + '"' + (c[field] ? ' checked' : '') + ' /> ' + esc(label) + '</label>'
+}
 
 function getSelectedStatuses() {
   return [...document.querySelectorAll('.status-check:checked')].map(input => input.value)
@@ -369,11 +423,9 @@ function syncStatusOptions() {
 function compareDateField(a, b, field, direction) {
   const av = a[field]
   const bv = b[field]
-
   if (!av && !bv) return 0
   if (!av) return 1
   if (!bv) return -1
-
   const cmp = String(av).localeCompare(String(bv))
   return direction === 'asc' ? cmp : -cmp
 }
