@@ -304,3 +304,19 @@ tbody tr:hover .status-cell.status-active{
   border-color:#222;
 }
 .report-filter-btn.active span{color:#ddd}
+
+
+/* Keep every table header fixed consistently while scrolling */
+.page .table-wrap thead th{
+  position:sticky!important;
+  top:0;
+  z-index:8;
+  background:#e9ebee;
+}
+.page .table-wrap thead th:nth-child(1),
+.page .table-wrap thead th:nth-child(2){
+  position:sticky!important;
+  left:auto!important;
+  z-index:8;
+  background:#e9ebee;
+}
