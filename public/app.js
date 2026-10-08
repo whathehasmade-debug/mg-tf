@@ -103,10 +103,8 @@ function render() {
     const shortfallOnly = ['반려(수치미달)', '불승인(수치미달)'].includes(String(c.status || ''))
     return `
     <tr data-id="${c.id}">
-      <td><strong>${esc(c.name)}</strong></td>
-      <td>${esc(c.introducer)}</td>
-      <td>${esc(c.branch)}</td>
-      <td>${esc(c.agency_contact)}</td>
+      <td class="name-cell" title="${esc(c.name)}"><strong>${esc(c.name)}</strong></td>
+      <td class="introducer-cell">${esc(c.introducer)}</td>
       <td>${fmt(c.filed_at)}</td>
       <td>${fmt(c.notice_at)}</td>
       <td>${fmt(c.material_received_at)}</td>
