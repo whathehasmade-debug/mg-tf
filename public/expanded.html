@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>확대특진 관리</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    .expanded-page{padding:14px 2cm}
+    .expanded-nav{display:flex;align-items:center;gap:8px}
+    .nav-link{text-decoration:none}
+    .expanded-toolbar{display:flex;gap:8px;align-items:center;padding:10px;border-bottom:1px solid #eee}
+    .expanded-toolbar .search{max-width:420px}
+    .expanded-table{width:max-content;min-width:1180px;table-layout:auto;border-collapse:separate;border-spacing:0}
+    .expanded-table th,.expanded-table td{padding:5px 7px;font-size:11px;white-space:nowrap;border-right:1px solid #d5d8dd;border-bottom:1px solid #d5d8dd}
+    .expanded-table th{background:#f3f4f6;color:#222;font-weight:750;position:sticky;top:0;z-index:2}
+    .expanded-table td:nth-child(1){min-width:170px;font-weight:700}
+    .expanded-table td:nth-child(2){min-width:75px}
+    .expanded-table td:nth-child(3){min-width:95px;text-align:center}
+    .expanded-table td:nth-child(4){min-width:90px}
+    .expanded-table td:nth-child(5),.expanded-table td:nth-child(7){min-width:170px}
+    .expanded-table td:nth-child(6),.expanded-table td:nth-child(8){min-width:95px}
+    .expanded-table td:nth-child(9){min-width:100px;text-align:center}
+    .expanded-table td:nth-child(10){min-width:220px}
+    .count-badge{font-size:13px;color:#666;font-weight:600}
+    @media(max-width:1100px){.expanded-page{padding-left:18px;padding-right:18px}}
+  </style>
+</head>
+<body>
+  <section id="expandedView" class="hidden">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">MG TF</div>
+        <h1>확대특진 관리</h1>
+      </div>
+      <div class="expanded-nav">
+        <a class="secondary small nav-link" href="./index.html">승인·불승인 관리</a>
+        <span id="userEmail" class="muted"></span>
+        <button id="logoutBtn" class="secondary small">로그아웃</button>
+      </div>
+    </header>
+
+    <main class="expanded-page">
+      <section class="panel">
+        <div class="expanded-toolbar">
+          <input id="expandedSearchInput" class="search" placeholder="이름, 소개자 검색" />
+          <span class="count-badge">전체 <strong id="expandedCount">0</strong>건</span>
+        </div>
+        <div class="table-wrap">
+          <table class="expanded-table">
+            <thead>
+              <tr>
+                <th>이름</th><th>소개자</th><th>접수일</th><th>진행상황</th>
+                <th>초진병원</th><th>초진수치</th><th>특진병원</th><th>특진수치</th>
+                <th>특진예정일</th><th>비고</th>
+              </tr>
+            </thead>
+            <tbody id="expandedRows"></tbody>
+          </table>
+        </div>
+        <div id="expandedEmpty" class="empty hidden">확대특진 사건이 없습니다.</div>
+      </section>
+    </main>
+  </section>
+  <script type="module" src="./expanded.js"></script>
+</body>
+</html>
