@@ -22,7 +22,10 @@
     .expanded-table td:nth-child(6),.expanded-table td:nth-child(8){min-width:95px}
     .expanded-table td:nth-child(9){min-width:100px;text-align:center}
     .expanded-table td:nth-child(10){min-width:220px}
+    .expanded-table tbody tr{cursor:pointer}
+    .expanded-table tbody tr:hover td{background:#f6f7f9}
     .count-badge{font-size:13px;color:#666;font-weight:600}
+    .edit-hint{font-size:12px;color:#888;margin-left:auto}
     @media(max-width:1100px){.expanded-page{padding-left:18px;padding-right:18px}}
   </style>
 </head>
@@ -45,6 +48,7 @@
         <div class="expanded-toolbar">
           <input id="expandedSearchInput" class="search" placeholder="이름, 소개자 검색" />
           <span class="count-badge">전체 <strong id="expandedCount">0</strong>건</span>
+          <span class="edit-hint">행을 누르면 수정할 수 있어요</span>
         </div>
         <div class="table-wrap">
           <table class="expanded-table">
@@ -62,6 +66,37 @@
       </section>
     </main>
   </section>
+
+  <dialog id="expandedDialog">
+    <form id="expandedForm" method="dialog" class="dialog-card">
+      <div class="dialog-head">
+        <div><div class="eyebrow">EXPANDED EXAM</div><h2 id="expandedDialogTitle">확대특진 수정</h2></div>
+        <button type="button" id="closeExpandedDialog" class="icon-btn">×</button>
+      </div>
+      <input type="hidden" id="eId" />
+      <div class="form-grid">
+        <label>이름<input id="eName" required /></label>
+        <label>소개자<input id="eIntroducer" /></label>
+        <label>지역본부<input id="eBranch" /></label>
+        <label>공단 담당자<input id="eAgencyContact" /></label>
+        <label>접수일<input id="eFiledAt" type="date" /></label>
+        <label>진행상황<input id="eStatus" placeholder="예: 접수완료, 특진예정, 특진중, 특진완료" /></label>
+        <label>초진병원<input id="eInitialHospital" /></label>
+        <label>초진수치<input id="eInitialValue" /></label>
+        <label>특진병원<input id="eSpecialHospital" /></label>
+        <label>특진수치<input id="eSpecialValue" /></label>
+        <label>특진예정일<input id="eScheduledAt" type="date" /></label>
+        <label class="full">비고<textarea id="eNotes" rows="4"></textarea></label>
+      </div>
+      <div class="dialog-actions">
+        <span class="spacer"></span>
+        <button type="button" id="cancelExpandedBtn" class="secondary">취소</button>
+        <button type="submit" class="primary">저장</button>
+      </div>
+      <p id="expandedFormMsg" class="message"></p>
+    </form>
+  </dialog>
+
   <script type="module" src="./expanded.js"></script>
 </body>
 </html>
