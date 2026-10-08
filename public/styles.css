@@ -203,3 +203,31 @@ tbody tr:hover .status-cell.status-active{
 @media(max-width:900px){
   .page{width:calc(100% - 20px)}
 }
+
+
+/* Center the decision workspace and use the full table width */
+.page{
+  width:100%;
+  max-width:1400px;
+  margin:0 auto;
+  padding:14px 24px;
+}
+.panel{width:100%}
+.table-wrap{width:100%;overflow-x:hidden}
+.table-wrap table{
+  width:100%;
+  min-width:0;
+  table-layout:fixed;
+}
+.table-wrap th:nth-child(1),.table-wrap td:nth-child(1){width:20%;min-width:0;max-width:none}
+.table-wrap th:nth-child(2),.table-wrap td:nth-child(2){width:9%;min-width:0;max-width:none}
+.table-wrap th:nth-child(3),.table-wrap td:nth-child(3),
+.table-wrap th:nth-child(4),.table-wrap td:nth-child(4),
+.table-wrap th:nth-child(5),.table-wrap td:nth-child(5){width:11%;min-width:0;max-width:none}
+.table-wrap th:nth-child(6),.table-wrap td:nth-child(6){width:16%;min-width:0;max-width:none}
+.table-wrap th:nth-child(7),.table-wrap td:nth-child(7),
+.table-wrap th:nth-child(8),.table-wrap td:nth-child(8),
+.table-wrap th:nth-child(9),.table-wrap td:nth-child(9){width:7.33%;min-width:0;max-width:none}
+@media(max-width:1100px){
+  .page{max-width:none;padding-left:16px;padding-right:16px}
+}
