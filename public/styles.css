@@ -250,3 +250,26 @@ tbody tr:hover .status-cell.status-active{
 }
 .stat span{font-size:12px}
 .stat strong{font-size:20px}
+
+
+/* 2026-10-08 readability + report-status distinction */
+.page .table-wrap th,
+.page .table-wrap td{
+  font-size:13px;
+  height:34px;
+  padding-top:6px;
+  padding-bottom:6px;
+}
+.report-cell{
+  width:100%;
+  height:100%;
+}
+.page .table-wrap td:has(.report-cell input:checked){
+  background:#eef1f4;
+}
+.page .table-wrap td:has(.report-cell input:not(:checked)){
+  background:#fff;
+}
+.page .table-wrap td:has(.na-mark){
+  background:#f7f7f8;
+}
