@@ -231,3 +231,8 @@ tbody tr:hover .status-cell.status-active{
 @media(max-width:1100px){
   .page{max-width:none;padding-left:16px;padding-right:16px}
 }
+
+
+/* Prevent the two filter menus from overlapping */
+#categoryMulti .multi-filter-menu{left:auto;right:0}
+#statusMulti .multi-filter-menu{left:0;right:auto}
