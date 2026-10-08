@@ -140,6 +140,13 @@ function render() {
 
 $('searchInput').addEventListener('input', render)
 
+$('categoryMulti').addEventListener('toggle', () => {
+  if ($('categoryMulti').open) $('statusMulti').open = false
+})
+$('statusMulti').addEventListener('toggle', () => {
+  if ($('statusMulti').open) $('categoryMulti').open = false
+})
+
 document.querySelectorAll('.category-check').forEach(input => {
   input.addEventListener('change', () => {
     updateCategorySummary()
