@@ -21,3 +21,49 @@ th{background:#fafafa;color:#666;font-weight:700;position:sticky;top:0}.sort-btn
 dialog{border:0;border-radius:20px;padding:0;width:min(880px,94vw);box-shadow:0 24px 80px rgba(0,0,0,.2)}dialog::backdrop{background:rgba(0,0,0,.36)}.dialog-card{padding:24px}.dialog-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}.icon-btn{border:0;background:transparent;font-size:28px;cursor:pointer}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}.flag-row{display:flex;gap:18px;flex-wrap:wrap;padding:18px 0}fieldset{border:1px solid #e5e5e5;border-radius:14px;padding:16px}legend{font-size:13px;font-weight:800;padding:0 7px}.dialog-actions{display:flex;gap:10px;margin-top:18px}.spacer{flex:1}
 @media(max-width:900px){.stats-grid{grid-template-columns:repeat(3,1fr)}.topbar{padding:0 18px}.page{padding:18px}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}}
 @media(max-width:560px){.stats-grid{grid-template-columns:repeat(2,1fr)}.top-actions #userEmail{display:none}.toolbar>*{width:100%}.toolbar .check{width:auto}}
+
+
+/* Spreadsheet-style case board */
+.page{max-width:none;padding:14px}
+.stats-grid{grid-template-columns:repeat(7,minmax(95px,1fr));gap:6px;margin-bottom:8px}
+.stat{border-radius:6px;padding:8px 10px}
+.stat span{margin-bottom:2px;font-size:11px}
+.stat strong{font-size:18px}
+.panel{border-radius:6px}
+.toolbar{padding:9px 10px;gap:7px}
+.search{min-width:230px}
+.toolbar input,.toolbar select,.multi-filter>summary{padding:8px 10px;border-radius:6px}
+.toolbar .primary{padding:8px 12px;border-radius:6px}
+.table-wrap{max-height:calc(100vh - 235px);overflow:auto;border-top:1px solid #bfc3c9}
+table{min-width:1900px;table-layout:auto;border-collapse:separate;border-spacing:0}
+th,td{padding:5px 7px;border-right:1px solid #d5d8dd;border-bottom:1px solid #d5d8dd;font-size:12px;line-height:1.25;height:31px;background:#fff}
+th{background:#e9ebee;color:#111;font-weight:800;top:0;z-index:7;text-align:center;border-top:0}
+tbody tr:hover td{background:#f4f8ff}
+th:nth-child(1),td:nth-child(1){width:150px;min-width:150px;max-width:150px;position:sticky;left:0;z-index:5}
+th:nth-child(2),td:nth-child(2){width:85px;min-width:85px;max-width:85px;position:sticky;left:150px;z-index:5}
+th:nth-child(1),th:nth-child(2){z-index:9;background:#e2e5e9}
+tbody td:nth-child(1),tbody td:nth-child(2){background:#fff}
+tbody tr:hover td:nth-child(1),tbody tr:hover td:nth-child(2){background:#f4f8ff}
+th:nth-child(3),td:nth-child(3){min-width:150px}
+th:nth-child(4),td:nth-child(4){min-width:205px}
+th:nth-child(5),td:nth-child(5),th:nth-child(6),td:nth-child(6),th:nth-child(7),td:nth-child(7){min-width:95px;text-align:center;white-space:nowrap}
+th:nth-child(8),td:nth-child(8){min-width:145px;text-align:center;white-space:nowrap}
+th:nth-child(9),td:nth-child(9){min-width:85px;text-align:center;white-space:nowrap}
+th:nth-child(10),td:nth-child(10),th:nth-child(11),td:nth-child(11),th:nth-child(12),td:nth-child(12){width:72px;min-width:72px;text-align:center}
+th:nth-child(13),td:nth-child(13){min-width:95px;white-space:nowrap}
+th:nth-child(14),td:nth-child(14){min-width:330px}
+.status-cell{font-weight:800;color:#111}
+.status-cell.status-approved{background:#1f78b4;color:#fff}
+.status-cell.status-denied{background:#d7191c;color:#fff}
+.status-cell.status-active{background:#68b36b;color:#fff}
+tbody tr:hover .status-cell.status-approved{background:#1f78b4}
+tbody tr:hover .status-cell.status-denied{background:#d7191c}
+tbody tr:hover .status-cell.status-active{background:#68b36b}
+.center{text-align:center}
+.material-cell{font-weight:800}
+.report-cell{display:grid;place-items:center;cursor:pointer}
+.report-cell input{width:16px;height:16px;margin:0;padding:0;accent-color:#111}
+.na-mark{color:#aaa}
+.notes-cell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:520px}
+.sort-btn{width:100%;text-align:center}
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(4,1fr)}.table-wrap{max-height:calc(100vh - 285px)}}
