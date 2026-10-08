@@ -35,20 +35,24 @@
       </div>
     </header>
 
+    <nav class="view-tabs">
+      <button id="decisionTab" class="view-tab active" type="button">승인·불승인 관리</button>
+      <button id="expandedTab" class="view-tab" type="button">확대특진</button>
+    </nav>
+
     <main class="page">
+      <section id="decisionSection">
       <section class="stats-grid">
         <article class="stat"><span>전체 사건</span><strong id="statTotal">0</strong></article>
         <article class="stat"><span>승인</span><strong id="statApproved">0</strong></article>
         <article class="stat"><span>불승인</span><strong id="statDeniedGeneral">0</strong></article>
         <article class="stat"><span>불승인(수치미달)</span><strong id="statShortfallDenied">0</strong></article>
         <article class="stat"><span>반려(수치미달)</span><strong id="statShortfallReturned">0</strong></article>
-        <article class="stat"><span>확대특진</span><strong id="statExpanded">0</strong></article>
-        <article class="stat"><span>진행중</span><strong id="statActive">0</strong></article>
       </section>
 
       <section class="panel">
         <div class="toolbar">
-          <input id="searchInput" class="search" placeholder="이름, 소개자, 비고 검색" />
+          <input id="searchInput" class="search" placeholder="이름, 소개자 검색" />
           <details id="categoryMulti" class="multi-filter">
             <summary id="categorySummary">전체 구분</summary>
             <div class="multi-filter-menu">
@@ -60,8 +64,6 @@
               <label><input type="checkbox" class="category-check" value="denied_general" /> 불승인</label>
               <label><input type="checkbox" class="category-check" value="shortfall_denied" /> 불승인(수치미달)</label>
               <label><input type="checkbox" class="category-check" value="shortfall_returned" /> 반려(수치미달)</label>
-              <label><input type="checkbox" class="category-check" value="expanded" /> 확대특진</label>
-              <label><input type="checkbox" class="category-check" value="active" /> 진행중</label>
             </div>
           </details>
           <details id="statusMulti" class="multi-filter">
@@ -78,7 +80,7 @@
         </div>
 
         <div class="table-wrap">
-          <table>
+          <table class="decision-table">
             <thead>
               <tr>
                 <th>이름</th><th>소개자</th>
@@ -92,6 +94,31 @@
           </table>
         </div>
         <div id="emptyState" class="empty hidden">조건에 맞는 사건이 없습니다.</div>
+      </section>
+
+      <section id="expandedSection" class="hidden">
+        <section class="expanded-head">
+          <div>
+            <div class="eyebrow">EXPANDED EXAM</div>
+            <h2>확대특진 관리 <span id="expandedCount" class="count-inline">0</span></h2>
+          </div>
+          <input id="expandedSearchInput" class="search compact-search" placeholder="이름, 소개자 검색" />
+        </section>
+        <section class="panel">
+          <div class="table-wrap expanded-wrap">
+            <table class="expanded-table">
+              <thead>
+                <tr>
+                  <th>이름</th><th>소개자</th><th>접수일</th><th>진행상황</th>
+                  <th>초진병원</th><th>초진수치</th><th>특진병원</th><th>특진수치</th>
+                  <th>특진예정일</th><th>비고</th>
+                </tr>
+              </thead>
+              <tbody id="expandedRows"></tbody>
+            </table>
+          </div>
+          <div id="expandedEmpty" class="empty hidden">확대특진 사건이 없습니다.</div>
+        </section>
       </section>
     </main>
   </section>
@@ -125,36 +152,13 @@
         <label>진행상황
           <input id="fStatus" list="statusOptions" placeholder="예: 승인(종결), 불승인(진행), 반려(수치미달)" />
           <datalist id="statusOptions">
-            <option value="접수대기"></option><option value="접수완료"></option>
-            <option value="특진예정"></option><option value="특진중"></option><option value="특진완료"></option>
-            <option value="승인"></option><option value="승인(종결)"></option><option value="승인(진행)"></option>
-            <option value="불승인"></option><option value="불승인(종결)"></option><option value="불승인(진행)"></option>
-            <option value="불승인(수치미달)"></option><option value="반려(수치미달)"></option>
-            <option value="종결"></option>
+            <option value="승인"></option>
+            <option value="불승인"></option>
+            <option value="불승인(수치미달)"></option>
+            <option value="반려(수치미달)"></option>
           </datalist>
         </label>
-        <label>직종<input id="fOccupation" /></label>
-        <label class="full">승불자료<input id="fApprovalMaterial" /></label>
-        <label class="full">비고<textarea id="fNotes" rows="4"></textarea></label>
       </div>
-      <div class="flag-row">
-        <label class="check"><input id="fMagog" type="checkbox" checked /> 마곡TF</label>
-        <label class="check"><input id="fCapital" type="checkbox" checked /> 수도권역</label>
-        <label class="check"><input id="fLawfirm" type="checkbox" checked /> 법프공</label>
-        <label class="check"><input id="fShortfall" type="checkbox" /> 수치미달</label>
-        <label class="check"><input id="fExpanded" type="checkbox" /> 확대특진</label>
-      </div>
-      <fieldset>
-        <legend>특진 정보</legend>
-        <div class="form-grid">
-          <label>초진병원<input id="fInitialHospital" /></label>
-          <label>초진수치<input id="fInitialValue" /></label>
-          <label>특진병원<input id="fSpecialHospital" /></label>
-          <label>특진수치<input id="fSpecialValue" /></label>
-          <label>특진예정일<input id="fScheduledAt" type="date" /></label>
-          <label class="full">특진 비고<textarea id="fExamNotes" rows="3"></textarea></label>
-        </div>
-      </fieldset>
       <div class="dialog-actions">
         <button type="button" id="deleteCaseBtn" class="danger hidden">삭제</button>
         <span class="spacer"></span>
