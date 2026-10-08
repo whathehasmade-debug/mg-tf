@@ -109,12 +109,9 @@ function render() {
       <td>${fmt(c.notice_at)}</td>
       <td>${fmt(c.material_received_at)}</td>
       <td class="status-cell ${statusTone(c.status)}">${esc(c.status)}</td>
-      <td class="center material-cell">${esc(approvalMaterialText(c))}</td>
       <td class="center">${compactReportOption(c, 'reported_magog', true)}</td>
       <td class="center">${compactReportOption(c, 'reported_capital', !shortfallOnly)}</td>
       <td class="center">${compactReportOption(c, 'reported_lawfirm', !shortfallOnly)}</td>
-      <td>${esc(c.occupation)}</td>
-      <td class="notes-cell">${esc(c.notes)}</td>
     </tr>`
   }).join('')
 
