@@ -6,12 +6,12 @@
   <title>확대특진 관리</title>
   <link rel="stylesheet" href="./styles.css" />
   <style>
-    .expanded-page{padding:14px 2cm}
+    .expanded-page{width:min(1280px,calc(100% - 32px));max-width:1280px;margin:0 auto;padding:14px 0}
     .expanded-nav{display:flex;align-items:center;gap:8px}
     .nav-link{text-decoration:none}
     .expanded-toolbar{display:flex;gap:8px;align-items:center;padding:10px;border-bottom:1px solid #eee}
     .expanded-toolbar .search{max-width:420px}
-    .expanded-table{width:max-content;min-width:1180px;table-layout:auto;border-collapse:separate;border-spacing:0}
+    .expanded-table{width:100%;min-width:1080px;table-layout:auto;border-collapse:separate;border-spacing:0}
     .expanded-table th,.expanded-table td{padding:5px 7px;font-size:11px;white-space:nowrap;border-right:1px solid #d5d8dd;border-bottom:1px solid #d5d8dd}
     .expanded-table th{background:#f3f4f6;color:#222;font-weight:750;position:sticky;top:0;z-index:2}
     .expanded-table td:nth-child(1){min-width:170px;font-weight:700}
@@ -24,9 +24,9 @@
     .expanded-table td:nth-child(10){min-width:220px}
     .expanded-table tbody tr{cursor:pointer}
     .expanded-table tbody tr:hover td{background:#f6f7f9}
-    .count-badge{font-size:13px;color:#666;font-weight:600}
+    .count-badge{font-size:13px;color:#666;font-weight:600}.expanded-table tbody tr{cursor:pointer}.expanded-table tbody tr:hover td{background:#f7f7f7}
     .edit-hint{font-size:12px;color:#888;margin-left:auto}
-    @media(max-width:1100px){.expanded-page{padding-left:18px;padding-right:18px}}
+    @media(max-width:1100px){.expanded-page{width:calc(100% - 20px)}}
   </style>
 </head>
 <body>
