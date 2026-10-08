@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>마곡TF 사건관리</title>
   <link rel="stylesheet" href="./styles.css" />
-  <style>#caseRows td:nth-child(9){display:none}.flag-row .check:nth-child(-n+3){display:none}</style>
+  <style>.flag-row .check:nth-child(-n+3){display:none}</style>
 </head>
 <body>
   <section id="authView" class="auth-shell">
@@ -81,10 +81,11 @@
           <table>
             <thead>
               <tr>
-                <th>이름</th><th>소개자</th><th>지역본부</th>
+                <th>이름</th><th>소개자</th><th>지역본부</th><th>공단담당자</th>
                 <th><button type="button" class="sort-btn" data-sort="filed_at">접수일 <span id="sortFiledIcon">↕</span></button></th>
                 <th><button type="button" class="sort-btn" data-sort="notice_at">통지일 <span id="sortNoticeIcon">↕</span></button></th>
-                <th>구분</th><th>진행상황</th><th>보고현황</th>
+                <th><button type="button" class="sort-btn" data-sort="material_received_at">자료수신일 <span id="sortReceivedIcon">↕</span></button></th>
+                <th>진행상황</th><th>승불자료</th><th>마곡TF</th><th>수도권역</th><th>법프공</th><th>직종</th><th>비고</th>
               </tr>
             </thead>
             <tbody id="caseRows"></tbody>
@@ -120,6 +121,7 @@
         <label>공단 담당자<input id="fAgencyContact" /></label>
         <label>접수일<input id="fFiledAt" type="date" /></label>
         <label>통지일<input id="fNoticeAt" type="date" /></label>
+        <label>자료 수신일<input id="fMaterialReceivedAt" type="date" /></label>
         <label>진행상황
           <input id="fStatus" list="statusOptions" placeholder="예: 승인(종결), 불승인(진행), 반려(수치미달)" />
           <datalist id="statusOptions">
