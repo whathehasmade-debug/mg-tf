@@ -163,3 +163,43 @@ tbody tr:hover .status-cell.status-active{
 #statusMulti .multi-filter-menu{
   max-height:min(430px, calc(100vh - 190px));
 }
+
+
+/* Tighter centered workspace */
+.page{
+  width:min(1180px, calc(100% - 32px));
+  max-width:1180px;
+  margin:0 auto;
+  padding:14px 0;
+}
+.stats-grid{
+  gap:6px;
+  margin-bottom:8px;
+}
+.stat{
+  padding:7px 9px;
+}
+.panel{
+  width:100%;
+}
+.page .table-wrap table{
+  width:100%;
+  table-layout:fixed;
+}
+.page .table-wrap th,
+.page .table-wrap td{
+  padding:4px 4px;
+}
+.page .table-wrap th:nth-child(1),.page .table-wrap td:nth-child(1){width:20%;min-width:0;max-width:none}
+.page .table-wrap th:nth-child(2),.page .table-wrap td:nth-child(2){width:8%;min-width:0;max-width:none}
+.page .table-wrap th:nth-child(3),.page .table-wrap td:nth-child(3),
+.page .table-wrap th:nth-child(4),.page .table-wrap td:nth-child(4),
+.page .table-wrap th:nth-child(5),.page .table-wrap td:nth-child(5){width:10%;min-width:0;max-width:none}
+.page .table-wrap th:nth-child(6),.page .table-wrap td:nth-child(6){width:16%;min-width:0;max-width:none}
+.page .table-wrap th:nth-child(7),.page .table-wrap td:nth-child(7),
+.page .table-wrap th:nth-child(8),.page .table-wrap td:nth-child(8),
+.page .table-wrap th:nth-child(9),.page .table-wrap td:nth-child(9){width:8%;min-width:0;max-width:none}
+
+@media(max-width:900px){
+  .page{width:calc(100% - 20px)}
+}
