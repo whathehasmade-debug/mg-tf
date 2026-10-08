@@ -78,6 +78,12 @@
           <button id="newCaseBtn" class="primary">+ 사건 등록</button>
         </div>
 
+        <div id="reportFilterTabs" class="report-filter-tabs">
+          <button type="button" class="report-filter-btn active" data-report-filter="all">전체 <span id="reportAllCount">0</span></button>
+          <button type="button" class="report-filter-btn" data-report-filter="complete">보고완료 <span id="reportCompleteCount">0</span></button>
+          <button type="button" class="report-filter-btn" data-report-filter="pending">미보고 있음 <span id="reportPendingCount">0</span></button>
+        </div>
+
         <div class="table-wrap">
           <table>
             <thead>
