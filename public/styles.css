@@ -152,3 +152,14 @@ tbody tr:hover .status-cell.status-active{
 #caseDialog label:has(#fNotes),
 #caseDialog .flag-row,
 #caseDialog fieldset{display:none}
+
+
+/* Keep filter dropdowns inside the visible browser area */
+.multi-filter-menu{
+  max-height:min(430px, calc(100vh - 190px));
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+#statusMulti .multi-filter-menu{
+  max-height:min(430px, calc(100vh - 190px));
+}
