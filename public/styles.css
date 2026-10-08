@@ -139,3 +139,16 @@ tbody tr:hover .status-cell.status-active{
 .table-wrap th:nth-child(8),.table-wrap td:nth-child(8),
 .table-wrap th:nth-child(9),.table-wrap td:nth-child(9){width:68px;min-width:68px;max-width:68px;text-align:center}
 .report-cell input{width:14px;height:14px}
+
+
+/* Keep the decision page focused on the four result categories */
+.stats-grid{grid-template-columns:repeat(5,minmax(120px,1fr))}
+.stats-grid .stat:nth-child(6),
+.stats-grid .stat:nth-child(7){display:none}
+.multi-filter-menu label:has(input[value="expanded"]),
+.multi-filter-menu label:has(input[value="active"]){display:none}
+#caseDialog label:has(#fOccupation),
+#caseDialog label:has(#fApprovalMaterial),
+#caseDialog label:has(#fNotes),
+#caseDialog .flag-row,
+#caseDialog fieldset{display:none}
