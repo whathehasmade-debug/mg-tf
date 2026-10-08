@@ -69,18 +69,15 @@ function render() {
 function openExpanded(id) {
   $('expandedForm').reset()
   $('expandedFormMsg').textContent = ''
-  $('expandedId').value = ''
-  $('expandedDialogTitle').textContent = '확대특진 등록'
-  $('deleteExpandedBtn').classList.add('hidden')
+  $('eId').value = ''
+  $('expandedDialogTitle').textContent = '확대특진 수정'
 
   if (id) {
     const c = expandedCases.find(x => x.id === id)
     if (!c) return
 
-    $('expandedId').value = c.id
+    $('eId').value = c.id
     $('expandedDialogTitle').textContent = c.name
-    $('deleteExpandedBtn').classList.remove('hidden')
-
     set('eName', c.name)
     set('eIntroducer', c.introducer)
     set('eBranch', c.branch)
@@ -98,7 +95,6 @@ function openExpanded(id) {
   dialog.showModal()
 }
 
-$('newExpandedBtn').addEventListener('click', () => openExpanded())
 $('closeExpandedDialog').addEventListener('click', () => dialog.close())
 $('cancelExpandedBtn').addEventListener('click', () => dialog.close())
 
@@ -106,7 +102,7 @@ $('expandedForm').addEventListener('submit', async e => {
   e.preventDefault()
   $('expandedFormMsg').textContent = '저장 중...'
 
-  const id = $('expandedId').value
+  const id = $('eId').value
   const payload = {
     name: $('eName').value.trim(),
     introducer: val('eIntroducer'),
@@ -123,26 +119,10 @@ $('expandedForm').addEventListener('submit', async e => {
     updated_at: new Date().toISOString()
   }
 
-  const result = id
-    ? await supabase.from('expanded_cases').update(payload).eq('id', id)
-    : await supabase.from('expanded_cases').insert(payload)
+  const result = await supabase.from('expanded_cases').update(payload).eq('id', id)
 
   if (result.error) {
     $('expandedFormMsg').textContent = result.error.message
-    return
-  }
-
-  dialog.close()
-  await loadExpandedCases()
-})
-
-$('deleteExpandedBtn').addEventListener('click', async () => {
-  const id = $('expandedId').value
-  if (!id || !confirm('이 확대특진 사건을 삭제할까요?')) return
-
-  const { error } = await supabase.from('expanded_cases').delete().eq('id', id)
-  if (error) {
-    $('expandedFormMsg').textContent = error.message
     return
   }
 
