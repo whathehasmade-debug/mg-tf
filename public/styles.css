@@ -273,3 +273,34 @@ tbody tr:hover .status-cell.status-active{
 .page .table-wrap td:has(.na-mark){
   background:#f7f7f8;
 }
+
+
+/* Report completion tabs */
+.report-filter-tabs{
+  display:flex;
+  gap:6px;
+  padding:8px 10px;
+  border-bottom:1px solid #d9dde3;
+  background:#fafafa;
+}
+.report-filter-btn{
+  border:1px solid #cfd4da;
+  background:#fff;
+  color:#333;
+  border-radius:6px;
+  padding:6px 10px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+.report-filter-btn span{
+  margin-left:3px;
+  color:#777;
+  font-weight:600;
+}
+.report-filter-btn.active{
+  background:#222;
+  color:#fff;
+  border-color:#222;
+}
+.report-filter-btn.active span{color:#ddd}
