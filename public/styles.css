@@ -236,3 +236,17 @@ tbody tr:hover .status-cell.status-active{
 /* Prevent the two filter menus from overlapping */
 #categoryMulti .multi-filter-menu{left:auto;right:0}
 #statusMulti .multi-filter-menu{left:0;right:auto}
+
+
+/* Slightly larger text for readability */
+.page .table-wrap th,
+.page .table-wrap td{
+  font-size:12.5px;
+}
+.toolbar input,
+.toolbar .multi-filter>summary,
+.toolbar .primary{
+  font-size:13px;
+}
+.stat span{font-size:12px}
+.stat strong{font-size:20px}
