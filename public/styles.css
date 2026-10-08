@@ -88,3 +88,18 @@ tbody td:nth-child(1),tbody td:nth-child(2){background:#fff}
 .status-cell.status-denied{background:#d7191c!important;color:#fff!important}
 .status-cell.status-active{background:#68b36b!important;color:#fff!important}
 @media(max-width:1250px){th,td{font-size:10.5px;padding-left:3px;padding-right:3px}.report-cell input{width:14px;height:14px}}
+
+
+/* Final compact layout */
+.page{padding:14px 2cm}
+table{table-layout:fixed;width:100%;min-width:0}
+th:nth-child(1),td:nth-child(1){width:22%}
+th:nth-child(2),td:nth-child(2){width:10%}
+th:nth-child(3),td:nth-child(3),
+th:nth-child(4),td:nth-child(4),
+th:nth-child(5),td:nth-child(5){width:11%}
+th:nth-child(6),td:nth-child(6){width:18%}
+th:nth-child(7),td:nth-child(7),
+th:nth-child(8),td:nth-child(8),
+th:nth-child(9),td:nth-child(9){width:5.67%}
+@media(max-width:1100px){.page{padding-left:18px;padding-right:18px}}
