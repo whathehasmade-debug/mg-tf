@@ -8,6 +8,7 @@ const $ = id => document.getElementById(id)
 let allCases = []
 let sortField = null
 let sortDirection = 'desc'
+let reportFilter = 'all'
 const authView = $('authView')
 const mainView = $('mainView')
 const caseDialog = $('caseDialog')
@@ -91,6 +92,7 @@ function render() {
     return (!q || hay.includes(q))
       && (!selectedStatuses.length || selectedStatuses.includes(c.status))
       && (!selectedCategories.length || selectedCategories.some(category => matchesCategory(c, category)))
+      && matchesReportFilter(c)
   })
 
   if (sortField) {
@@ -123,6 +125,10 @@ function render() {
   $('statShortfallReturned').textContent = allCases.filter(c => matchesCategory(c, 'shortfall_returned')).length
   $('statExpanded').textContent = allCases.filter(c => matchesCategory(c, 'expanded')).length
   $('statActive').textContent = allCases.filter(c => matchesCategory(c, 'active')).length
+  const completeCount = allCases.filter(isReportComplete).length
+  $('reportAllCount').textContent = allCases.length
+  $('reportCompleteCount').textContent = completeCount
+  $('reportPendingCount').textContent = allCases.length - completeCount
 
   document.querySelectorAll('#caseRows tr')
     .forEach(tr => tr.addEventListener('click', () => openCase(tr.dataset.id)))
@@ -145,6 +151,14 @@ $('categoryMulti').addEventListener('toggle', () => {
 })
 $('statusMulti').addEventListener('toggle', () => {
   if ($('statusMulti').open) $('categoryMulti').open = false
+})
+
+document.querySelectorAll('.report-filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    reportFilter = btn.dataset.reportFilter
+    document.querySelectorAll('.report-filter-btn').forEach(x => x.classList.toggle('active', x === btn))
+    render()
+  })
 })
 
 document.querySelectorAll('.category-check').forEach(input => {
@@ -337,6 +351,18 @@ function statusTone(status) {
   if (s.startsWith('불승인') || s.startsWith('반려')) return 'status-denied'
   if (isActiveCase({ status: s })) return 'status-active'
   return ''
+}
+
+function isReportComplete(c) {
+  const s = String(c.status || '')
+  const shortfallOnly = ['반려(수치미달)', '불승인(수치미달)'].includes(s)
+  return !!c.reported_magog && (shortfallOnly || (!!c.reported_capital && !!c.reported_lawfirm))
+}
+
+function matchesReportFilter(c) {
+  if (reportFilter === 'complete') return isReportComplete(c)
+  if (reportFilter === 'pending') return !isReportComplete(c)
+  return true
 }
 
 function reportStatusControls(c) {
