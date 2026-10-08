@@ -99,17 +99,26 @@ function render() {
 
   updateSortIcons()
 
-  $('caseRows').innerHTML = filtered.map(c => `
+  $('caseRows').innerHTML = filtered.map(c => {
+    const shortfallOnly = ['반려(수치미달)', '불승인(수치미달)'].includes(String(c.status || ''))
+    return `
     <tr data-id="${c.id}">
       <td><strong>${esc(c.name)}</strong></td>
       <td>${esc(c.introducer)}</td>
       <td>${esc(c.branch)}</td>
+      <td>${esc(c.agency_contact)}</td>
       <td>${fmt(c.filed_at)}</td>
       <td>${fmt(c.notice_at)}</td>
-      <td>${categoryBadges(c)}</td>
-      <td><span class="status-pill">${esc(c.status)}</span></td>
-      <td>${reportStatusControls(c)}</td>
-    </tr>`).join('')
+      <td>${fmt(c.material_received_at)}</td>
+      <td class="status-cell ${statusTone(c.status)}">${esc(c.status)}</td>
+      <td class="center material-cell">${esc(approvalMaterialText(c))}</td>
+      <td class="center">${compactReportOption(c, 'reported_magog', true)}</td>
+      <td class="center">${compactReportOption(c, 'reported_capital', !shortfallOnly)}</td>
+      <td class="center">${compactReportOption(c, 'reported_lawfirm', !shortfallOnly)}</td>
+      <td>${esc(c.occupation)}</td>
+      <td class="notes-cell">${esc(c.notes)}</td>
+    </tr>`
+  }).join('')
 
   $('emptyState').classList.toggle('hidden', filtered.length > 0)
   $('statTotal').textContent = allCases.length
@@ -123,7 +132,7 @@ function render() {
   document.querySelectorAll('#caseRows tr')
     .forEach(tr => tr.addEventListener('click', () => openCase(tr.dataset.id)))
 
-  document.querySelectorAll('.report-option')
+  document.querySelectorAll('.report-option, .report-cell')
     .forEach(label => label.addEventListener('click', e => e.stopPropagation()))
 
   document.querySelectorAll('.report-check').forEach(input => {
@@ -188,6 +197,7 @@ function openCase(id) {
     $('deleteCaseBtn').classList.remove('hidden')
     set('fName', c.name); set('fIntroducer', c.introducer); set('fBranch', c.branch)
     set('fAgencyContact', c.agency_contact); set('fFiledAt', c.filed_at); set('fNoticeAt', c.notice_at)
+    set('fMaterialReceivedAt', c.material_received_at)
     set('fStatus', c.status); set('fOccupation', c.occupation)
     set('fApprovalMaterial', c.approval_material); set('fNotes', c.notes)
     $('fMagog').checked = !!c.tag_magog
@@ -226,6 +236,7 @@ $('caseForm').addEventListener('submit', async (ev) => {
     agency_contact: cleanAgencyContact(val('fAgencyContact')),
     filed_at: val('fFiledAt'),
     notice_at: val('fNoticeAt'),
+    material_received_at: val('fMaterialReceivedAt'),
     status: statusValue,
     occupation: val('fOccupation'),
     approval_material: val('fApprovalMaterial'),
@@ -305,6 +316,25 @@ async function updateReportStatus(input) {
     if (c) c[field] = checked
   }
   input.disabled = false
+}
+
+function approvalMaterialText(c) {
+  if (c.approval_material) return c.approval_material
+  return c.material_received_at ? 'O' : ''
+}
+
+function compactReportOption(c, field, applicable) {
+  if (!applicable) return '<span class="na-mark">–</span>'
+  return '<label class="report-cell" title="' + field + '"><input type="checkbox" class="report-check" data-id="' +
+    esc(c.id) + '" data-field="' + field + '"' + (c[field] ? ' checked' : '') + ' /></label>'
+}
+
+function statusTone(status) {
+  const s = String(status || '')
+  if (s.startsWith('승인')) return 'status-approved'
+  if (s.startsWith('불승인') || s.startsWith('반려')) return 'status-denied'
+  if (isActiveCase({ status: s })) return 'status-active'
+  return ''
 }
 
 function reportStatusControls(c) {
@@ -434,8 +464,10 @@ function compareDateField(a, b, field, direction) {
 function updateSortIcons() {
   const filed = $('sortFiledIcon')
   const notice = $('sortNoticeIcon')
+  const received = $('sortReceivedIcon')
   if (filed) filed.textContent = sortField === 'filed_at' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕'
   if (notice) notice.textContent = sortField === 'notice_at' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕'
+  if (received) received.textContent = sortField === 'material_received_at' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕'
 }
 
 function cleanAgencyContact(v) {
