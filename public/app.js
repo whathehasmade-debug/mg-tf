@@ -9,6 +9,7 @@ let allCases = []
 let sortField = null
 let sortDirection = 'desc'
 let reportFilter = 'all'
+let notesOnly = false
 const authView = $('authView')
 const mainView = $('mainView')
 const caseDialog = $('caseDialog')
@@ -93,6 +94,7 @@ function render() {
       && (!selectedStatuses.length || selectedStatuses.includes(c.status))
       && (!selectedCategories.length || selectedCategories.some(category => matchesCategory(c, category)))
       && matchesReportFilter(c)
+      && (!notesOnly || hasNotes(c))
   })
 
   if (sortField) {
@@ -105,7 +107,7 @@ function render() {
     const shortfallOnly = ['반려(수치미달)', '불승인(수치미달)'].includes(String(c.status || ''))
     return `
     <tr data-id="${c.id}">
-      <td class="name-cell" title="${esc(c.name)}"><strong>${esc(c.name)}</strong></td>
+      <td class="name-cell" title="${esc(c.name)}"><strong>${esc(c.name)}</strong>${hasNotes(c) ? '<span class="note-mark" title="비고 있음">📝</span>' : ''}</td>
       <td class="introducer-cell">${esc(c.introducer)}</td>
       <td>${fmt(c.filed_at)}</td>
       <td>${fmt(c.notice_at)}</td>
@@ -129,6 +131,7 @@ function render() {
   $('reportAllCount').textContent = allCases.length
   $('reportCompleteCount').textContent = completeCount
   $('reportPendingCount').textContent = allCases.length - completeCount
+  $('notesCount').textContent = allCases.filter(hasNotes).length
 
   document.querySelectorAll('#caseRows tr')
     .forEach(tr => tr.addEventListener('click', () => openCase(tr.dataset.id)))
@@ -153,12 +156,18 @@ $('statusMulti').addEventListener('toggle', () => {
   if ($('statusMulti').open) $('categoryMulti').open = false
 })
 
-document.querySelectorAll('.report-filter-btn').forEach(btn => {
+document.querySelectorAll('.report-filter-btn[data-report-filter]').forEach(btn => {
   btn.addEventListener('click', () => {
     reportFilter = btn.dataset.reportFilter
-    document.querySelectorAll('.report-filter-btn').forEach(x => x.classList.toggle('active', x === btn))
+    document.querySelectorAll('.report-filter-btn[data-report-filter]').forEach(x => x.classList.toggle('active', x === btn))
     render()
   })
+})
+
+$('notesFilterBtn').addEventListener('click', () => {
+  notesOnly = !notesOnly
+  $('notesFilterBtn').classList.toggle('active', notesOnly)
+  render()
 })
 
 document.querySelectorAll('.category-check').forEach(input => {
@@ -351,6 +360,10 @@ function statusTone(status) {
   if (s.startsWith('불승인') || s.startsWith('반려')) return 'status-denied'
   if (isActiveCase({ status: s })) return 'status-active'
   return ''
+}
+
+function hasNotes(c) {
+  return !!String(c.notes || '').trim()
 }
 
 function isReportComplete(c) {
