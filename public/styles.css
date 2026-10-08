@@ -320,3 +320,9 @@ tbody tr:hover .status-cell.status-active{
   z-index:8;
   background:#e9ebee;
 }
+
+
+/* Note marker and note-only filter */
+#caseDialog label:has(#fNotes){display:flex}
+.note-mark{display:inline-block;margin-left:6px;font-size:13px;vertical-align:middle;opacity:.78}
+.notes-filter-btn.active{background:#222;color:#fff;border-color:#222}
