@@ -443,9 +443,9 @@ function matchesCategory(c, category) {
   if (!category) return true
   const s = String(c.status || '')
   if (category === 'approved') return s.startsWith('승인')
-  if (category === 'denied_general') return !c.numeric_shortfall && s.startsWith('불승인')
-  if (category === 'shortfall_denied') return !!c.numeric_shortfall && s.startsWith('불승인')
-  if (category === 'shortfall_returned') return !!c.numeric_shortfall && s.startsWith('반려')
+  if (category === 'denied_general') return s.startsWith('불승인') && s !== '불승인(수치미달)'
+  if (category === 'shortfall_denied') return s === '불승인(수치미달)'
+  if (category === 'shortfall_returned') return s === '반려(수치미달)'
   if (category === 'expanded') return !!c.expanded_exam
   if (category === 'active') return isActiveCase(c)
   return true
