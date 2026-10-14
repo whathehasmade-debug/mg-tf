@@ -87,6 +87,16 @@ function render() {
   })
 
   $('worklogEmpty').classList.toggle('hidden', visible.length > 0)
+
+  const selectAll = $('selectAllVisible')
+  if (selectAll) {
+    const visibleIds = new Set(visible.map(e => e.id))
+    const visibleCount = visibleIds.size
+    const completedVisible = visible.filter(e => e.completed).length
+    selectAll.checked = visibleCount > 0 && completedVisible === visibleCount
+    selectAll.indeterminate = completedVisible > 0 && completedVisible < visibleCount
+    selectAll.disabled = visibleCount === 0
+  }
 }
 
 function taskRow(e) {
@@ -211,6 +221,41 @@ document.querySelectorAll('.view-switch button').forEach(btn => {
 })
 
 $('worklogSearch').addEventListener('input', render)
+
+$('selectAllVisible').addEventListener('change', async e => {
+  const visible = visibleEntries()
+  if (!visible.length) return
+
+  const completed = e.target.checked
+  e.target.disabled = true
+
+  const ids = visible.map(x => x.id)
+  const { error } = await supabase
+    .from('worklog_entries')
+    .update({
+      completed,
+      completed_at: completed ? new Date().toISOString() : null,
+      updated_at: new Date().toISOString()
+    })
+    .in('id', ids)
+
+  e.target.disabled = false
+
+  if (error) {
+    alert('전체 선택 저장에 실패했습니다.')
+    await loadEntries()
+    return
+  }
+
+  entries.forEach(item => {
+    if (ids.includes(item.id)) {
+      item.completed = completed
+      item.completed_at = completed ? new Date().toISOString() : null
+    }
+  })
+  render()
+})
+
 $('newTaskBtn').addEventListener('click', openNew)
 $('closeWorklogDialog').addEventListener('click', () => dialog.close())
 $('cancelWorklogBtn').addEventListener('click', () => dialog.close())
