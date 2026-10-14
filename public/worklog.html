@@ -9,8 +9,7 @@
     .worklog-page{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:18px 0 40px}
     .worklog-nav{display:flex;align-items:center;gap:8px}
     .nav-link{text-decoration:none}
-    .worklog-summary{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:8px;margin-bottom:12px}
-    .worklog-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px}
+        .worklog-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px}
     .worklog-toolbar .search{flex:1;min-width:260px}
     .view-switch{display:flex;gap:5px}
     .view-switch button{border:1px solid #cfd4da;background:#fff;border-radius:6px;padding:7px 10px;font-size:13px;font-weight:700;cursor:pointer}
@@ -58,11 +57,6 @@
     </header>
 
     <main class="worklog-page">
-      <section class="worklog-summary">
-        <article class="stat"><span>전체 업무</span><strong id="statAll">0</strong></article>
-        <article class="stat"><span>미완료</span><strong id="statPending">0</strong></article>
-        <article class="stat"><span>완료</span><strong id="statDone">0</strong></article>
-      </section>
 
       <section class="panel">
         <div class="worklog-toolbar">
