@@ -73,7 +73,7 @@ function render() {
   $('weekGroups').innerHTML = [...groups.entries()].map(([key, items]) => {
     const [start, end] = key.split('|')
     return '<section class="week-section">' +
-      '<div class="week-head"><h2>' + weekLabel(start, end) + '</h2><span class="week-count">' + items.length + '건</span></div>' +
+      '<div class="week-head"><h2>' + weekLabel(start, end) + '</h2><div style="display:flex;align-items:center;gap:10px"><label class="check" style="font-size:12px"><input class="week-select-all" type="checkbox" data-week="' + esc(key) + '"' + (items.length && items.every(x => x.completed) ? ' checked' : '') + ' /> 전체선택</label><span class="week-count">' + items.length + '건</span></div></div>' +
       '<div class="task-list">' + items.map(taskRow).join('') + '</div>' +
     '</section>'
   }).join('')
@@ -85,18 +85,15 @@ function render() {
   document.querySelectorAll('.task-content').forEach(el => {
     el.addEventListener('click', () => openTask(el.dataset.id))
   })
+  document.querySelectorAll('.week-select-all').forEach(input => {
+    const [start, end] = input.dataset.week.split('|')
+    const weekItems = normal.filter(e => e.week_start === start && e.week_end === end)
+    const doneCount = weekItems.filter(e => e.completed).length
+    input.indeterminate = doneCount > 0 && doneCount < weekItems.length
+    input.addEventListener('change', () => toggleWeek(start, end, input.checked))
+  })
 
   $('worklogEmpty').classList.toggle('hidden', visible.length > 0)
-
-  const selectAll = $('selectAllVisible')
-  if (selectAll) {
-    const visibleIds = new Set(visible.map(e => e.id))
-    const visibleCount = visibleIds.size
-    const completedVisible = visible.filter(e => e.completed).length
-    selectAll.checked = visibleCount > 0 && completedVisible === visibleCount
-    selectAll.indeterminate = completedVisible > 0 && completedVisible < visibleCount
-    selectAll.disabled = visibleCount === 0
-  }
 }
 
 function taskRow(e) {
@@ -105,6 +102,35 @@ function taskRow(e) {
     '<div class="task-content" data-id="' + esc(e.id) + '">' + esc(e.content) + '</div>' +
     '<div class="task-meta">' + (e.pinned ? '<span class="pin-badge">계속 확인</span>' : '') + '</div>' +
   '</div>'
+}
+
+async function toggleWeek(start, end, completed) {
+  const targets = visibleEntries().filter(e => !e.pinned && e.week_start === start && e.week_end === end)
+  if (!targets.length) return
+
+  const ids = targets.map(e => e.id)
+  const { error } = await supabase
+    .from('worklog_entries')
+    .update({
+      completed,
+      completed_at: completed ? new Date().toISOString() : null,
+      updated_at: new Date().toISOString()
+    })
+    .in('id', ids)
+
+  if (error) {
+    alert('주간 전체선택 저장에 실패했습니다.')
+    await loadEntries()
+    return
+  }
+
+  entries.forEach(item => {
+    if (ids.includes(item.id)) {
+      item.completed = completed
+      item.completed_at = completed ? new Date().toISOString() : null
+    }
+  })
+  render()
 }
 
 async function toggleComplete(id, completed) {
@@ -222,39 +248,6 @@ document.querySelectorAll('.view-switch button').forEach(btn => {
 
 $('worklogSearch').addEventListener('input', render)
 
-$('selectAllVisible').addEventListener('change', async e => {
-  const visible = visibleEntries()
-  if (!visible.length) return
-
-  const completed = e.target.checked
-  e.target.disabled = true
-
-  const ids = visible.map(x => x.id)
-  const { error } = await supabase
-    .from('worklog_entries')
-    .update({
-      completed,
-      completed_at: completed ? new Date().toISOString() : null,
-      updated_at: new Date().toISOString()
-    })
-    .in('id', ids)
-
-  e.target.disabled = false
-
-  if (error) {
-    alert('전체 선택 저장에 실패했습니다.')
-    await loadEntries()
-    return
-  }
-
-  entries.forEach(item => {
-    if (ids.includes(item.id)) {
-      item.completed = completed
-      item.completed_at = completed ? new Date().toISOString() : null
-    }
-  })
-  render()
-})
 
 $('newTaskBtn').addEventListener('click', openNew)
 $('closeWorklogDialog').addEventListener('click', () => dialog.close())
