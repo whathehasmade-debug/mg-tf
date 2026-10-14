@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>업무일지</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    .worklog-page{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:18px 0 40px}
+    .worklog-nav{display:flex;align-items:center;gap:8px}
+    .nav-link{text-decoration:none}
+    .worklog-summary{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:8px;margin-bottom:12px}
+    .worklog-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px}
+    .worklog-toolbar .search{flex:1;min-width:260px}
+    .view-switch{display:flex;gap:5px}
+    .view-switch button{border:1px solid #cfd4da;background:#fff;border-radius:6px;padding:7px 10px;font-size:13px;font-weight:700;cursor:pointer}
+    .view-switch button.active{background:#222;color:#fff;border-color:#222}
+    .ongoing-section,.week-section{background:#fff;border:1px solid #dfe3e8;border-radius:8px;margin:10px 0;overflow:hidden}
+    .ongoing-section{border-style:dashed}
+    .week-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;background:#f5f6f7;border-bottom:1px solid #e1e4e8}
+    .week-head h2{font-size:15px;margin:0}
+    .week-count{font-size:12px;color:#777}
+    .task-list{display:flex;flex-direction:column}
+    .task-row{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:6px;min-height:38px;padding:5px 10px;border-bottom:1px solid #edf0f2}
+    .task-row:last-child{border-bottom:0}
+    .task-check{width:17px;height:17px;cursor:pointer}
+    .task-content{font-size:13px;line-height:1.45;cursor:pointer;white-space:pre-wrap;word-break:keep-all}
+    .task-row.completed .task-content{text-decoration:line-through;color:#999}
+    .task-row.completed{background:#fafafa}
+    .task-meta{display:flex;align-items:center;gap:6px}
+    .pin-badge{font-size:11px;border:1px solid #d2d6db;border-radius:999px;padding:2px 6px;color:#666;background:#fff}
+    .empty-week{padding:18px;color:#888;text-align:center;font-size:13px}
+    .dialog-card.worklog-dialog{max-width:720px}
+    .worklog-dialog textarea{min-height:130px}
+    .danger{background:#fff;border:1px solid #d7a7a7;color:#a22}
+    .danger:hover{background:#fff6f6}
+    @media(max-width:760px){
+      .worklog-page{width:calc(100% - 18px)}
+      .worklog-summary{grid-template-columns:repeat(3,1fr)}
+      .task-row{grid-template-columns:26px 1fr}
+      .task-meta{grid-column:2}
+    }
+  </style>
+</head>
+<body>
+  <section id="worklogView" class="hidden">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">MG TF</div>
+        <h1>업무일지</h1>
+      </div>
+      <div class="worklog-nav">
+        <a class="secondary small nav-link" href="./index.html">승인·불승인 관리</a>
+        <a class="secondary small nav-link" href="./expanded.html">확대특진</a>
+        <span id="userEmail" class="muted"></span>
+        <button id="logoutBtn" class="secondary small">로그아웃</button>
+      </div>
+    </header>
+
+    <main class="worklog-page">
+      <section class="worklog-summary">
+        <article class="stat"><span>전체 업무</span><strong id="statAll">0</strong></article>
+        <article class="stat"><span>미완료</span><strong id="statPending">0</strong></article>
+        <article class="stat"><span>완료</span><strong id="statDone">0</strong></article>
+      </section>
+
+      <section class="panel">
+        <div class="worklog-toolbar">
+          <input id="worklogSearch" class="search" placeholder="재해자명이나 업무내용 검색" />
+          <div class="view-switch">
+            <button type="button" class="active" data-mode="all">전체</button>
+            <button type="button" data-mode="pending">미완료</button>
+            <button type="button" data-mode="done">완료</button>
+          </div>
+          <button id="newTaskBtn" class="primary">+ 업무 추가</button>
+        </div>
+      </section>
+
+      <section id="ongoingWrap" class="ongoing-section hidden">
+        <div class="week-head">
+          <h2>계속 확인할 사항</h2>
+          <span id="ongoingCount" class="week-count"></span>
+        </div>
+        <div id="ongoingRows" class="task-list"></div>
+      </section>
+
+      <div id="weekGroups"></div>
+      <div id="worklogEmpty" class="empty hidden">표시할 업무가 없습니다.</div>
+    </main>
+  </section>
+
+  <dialog id="worklogDialog">
+    <form id="worklogForm" class="dialog-card worklog-dialog">
+      <div class="dialog-head">
+        <div><div class="eyebrow">WORK LOG</div><h2 id="worklogDialogTitle">업무 추가</h2></div>
+        <button type="button" id="closeWorklogDialog" class="icon-btn">×</button>
+      </div>
+      <input id="wId" type="hidden" />
+      <div class="form-grid">
+        <label>주 시작일<input id="wWeekStart" type="date" required /></label>
+        <label>주 종료일<input id="wWeekEnd" type="date" required /></label>
+        <label class="full">업무 내용<textarea id="wContent" required></textarea></label>
+        <label class="check"><input id="wPinned" type="checkbox" /> 계속 확인할 사항으로 표시</label>
+        <label class="check"><input id="wCompleted" type="checkbox" /> 완료</label>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" id="deleteWorklogBtn" class="danger hidden">삭제</button>
+        <span class="spacer"></span>
+        <button type="button" id="cancelWorklogBtn" class="secondary">취소</button>
+        <button type="submit" class="primary">저장</button>
+      </div>
+      <p id="worklogMsg" class="message"></p>
+    </form>
+  </dialog>
+
+  <script type="module" src="./worklog.js"></script>
+</body>
+</html>
