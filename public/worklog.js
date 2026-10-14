@@ -49,12 +49,6 @@ function visibleEntries() {
 }
 
 function render() {
-  const all = entries.length
-  const done = entries.filter(e => e.completed).length
-  $('statAll').textContent = all
-  $('statDone').textContent = done
-  $('statPending').textContent = all - done
-
   const visible = visibleEntries()
   const ongoing = visible.filter(e => e.pinned)
   const normal = visible.filter(e => !e.pinned)
