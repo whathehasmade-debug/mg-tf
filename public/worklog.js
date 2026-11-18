@@ -158,11 +158,23 @@ function openNew() {
   $('deleteWorklogBtn').classList.add('hidden')
   $('worklogMsg').textContent = ''
 
-  const latest = entries.slice().sort((a,b) => String(b.week_start).localeCompare(String(a.week_start)))[0]
-  if (latest) {
-    $('wWeekStart').value = latest.week_start
-    $('wWeekEnd').value = latest.week_end
+  const now = new Date()
+  const day = now.getDay()
+  const diffToMonday = day === 0 ? -6 : 1 - day
+  const monday = new Date(now)
+  monday.setDate(now.getDate() + diffToMonday)
+  const friday = new Date(monday)
+  friday.setDate(monday.getDate() + 4)
+
+  const localDate = d => {
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return y + '-' + m + '-' + day
   }
+
+  $('wWeekStart').value = localDate(monday)
+  $('wWeekEnd').value = localDate(friday)
 
   dialog.showModal()
 }
